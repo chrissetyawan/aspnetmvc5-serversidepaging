@@ -21,7 +21,7 @@ How To use :
 - Run query "CreateTable.sql", this will create 1 table
 - Update connection string in "..\MvcApplication\web.config" following your sql server configuration
 - Open file "MvcApplication.sln" with Visual Studio
-- Run it on IIS Express or Publish it
+- Run it on IIS Express or publish it to IIS Server
 
 Note :
 - After publish make sure you give permision to folder "..\App_Data\uploads"
