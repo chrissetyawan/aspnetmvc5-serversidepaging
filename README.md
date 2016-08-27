@@ -4,7 +4,7 @@ This is an example application using ASP.NET MVC 5 with datatable server side pr
 
 
 Developer Tools : 
-- Visual studio 2015 and IIS Express/ IIS ver 10
+- Visual studio 2015 and IIS Express and IIS 10.0
 - SQL Server 2014
 - SQL Server 2014 Management Studio 2014
 - NET Framework 4.6
@@ -19,7 +19,7 @@ Feature :
 How To use :
 - Create database name "mvcapp" on your SQL Server
 - Run query "CreateTable.sql", this will create 1 table
-- Update connection string in "../MvcApplication/web.config" following your sql server configuration
+- Update connection string in "..\MvcApplication\web.config" following your sql server configuration
 - Open file "MvcApplication.sln" with Visual Studio
 - Run it or Publish it
 
