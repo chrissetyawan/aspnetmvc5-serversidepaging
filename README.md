@@ -23,7 +23,7 @@ How To use :
 - Open file "MvcApplication.sln" with Visual Studio
 - Run it on IIS Express or publish it to IIS Server
 
-Note :
+Trouble Shooting :
 - After publish make sure you give permision to folder "..\App_Data\uploads"
 - After publish the web application, if there are HTTP Error 500.19 and error code : 0x80070021 when accessing the website,   
   please register 4.5/4.6 from the control panel:
