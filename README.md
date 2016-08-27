@@ -1,6 +1,6 @@
 # aspnetmvc5-serversidepaging
 
-This is an example application using ASP.NET MVC 5 with datatable server side processing
+This is an example ASP.NET MVC 5 application with datatable server side processing
 
 
 Developer Tools : 
