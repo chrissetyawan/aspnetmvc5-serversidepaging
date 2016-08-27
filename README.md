@@ -28,6 +28,6 @@ Trouble Shooting :
 - After publish the web application, if there are HTTP Error 500.19 and error code : 0x80070021 when accessing the website,   
   please register 4.5/4.6 from the control panel:
   Programs and Features > Turn Windows features on or off > Information Information Services > World Wide Web Services > Application Development Features > Select ASP.NET 4.5/4.6
-  reference : http://goo.gl/1J10wH
+  ( reference link : http://goo.gl/1J10wH )
 
 
