@@ -1,0 +1,58 @@
+﻿@model System.Data.DataTable
+@{
+    Layout = null;
+    ViewBag.Title = "Interview List";
+    var num = 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/PrintPreview/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/PrintPreview/bootstrap.print.css")" rel="stylesheet" type="text/css" />
+</head>
+<body onload="window.print();">
+    <div class="container-fluid">
+
+        <div>
+            <p>
+                <strong style="font-style:italic;font-weight: bold; font-size:16px;vertical-align:text-top">
+                    @ViewBag.HeaderTitle
+                </strong>
+            </p>
+            <p>
+                <strong>@ViewBag.Filter</strong>
+            </p>
+        </div>
+
+        <table class="table" >
+            <thead style="border-bottom-style:solid;border-bottom-width:medium;border-bottom-color:inherit;border-top-style:solid;border-top-width:medium;border-top-color:inherit">
+                <tr>
+                    <th>No</th>
+                    @foreach (System.Data.DataColumn col in Model.Columns)
+                    {
+                        <th style="width:auto">@col.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody style="border-bottom-style:solid;border-bottom-width:medium;border-bottom-color:inherit">
+                @foreach (System.Data.DataRow row in Model.Rows)
+                {
+                    num++;
+                    <tr>
+                        <td style="text-align:right">@num</td>
+                        @foreach (System.Data.DataColumn col in Model.Columns)
+                        {
+                            <td>@row[col.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>
