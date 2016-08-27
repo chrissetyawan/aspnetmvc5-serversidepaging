@@ -4,7 +4,7 @@ This is an example application using ASP.NET MVC 5 with datatable server side pr
 
 
 Developer Tools : 
-- Visual studio 2015 and IIS Express and IIS 10.0
+- Visual studio 2015, IIS Express and IIS 10.0
 - SQL Server 2014
 - SQL Server 2014 Management Studio 2014
 - NET Framework 4.6
