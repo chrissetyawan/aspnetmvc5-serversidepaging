@@ -24,7 +24,7 @@ How To use :
 - Run App to IIS Express or publish it to IIS Server
 
 Trouble Shooting :
-- After publish make sure you give permision to folder "..\App_Data\uploads"
+- After publish, update IIS_IUSRS permission as full control on folder "..\App_Data\uploads" as full control
 - After publish the web application, if there are HTTP Error 500.19 and error code : 0x80070021 when accessing the website, please register NET 4.5/4.6 from the control panel: 
   Programs and Features > Turn Windows features on or off > Information Information Services > World Wide Web Services > Application Development Features > Select ASP.NET 4.5/4.6
   ( reference link : http://goo.gl/1J10wH )
