@@ -1,0 +1,754 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Application</title>
+    @Html.Partial("CSSPartial")
+    <style>
+        tfoot {
+            display: table-header-group;
+        }
+
+        tfoot input {
+            width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+
+        .dataTables_scroll {
+            overflow: auto;
+            width: 100%;
+        }
+
+        span.error {
+            display: block;
+            visibility: hidden;
+            color: red;
+            font-size: 90%;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">Application</a>
+            </div>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <input type="file" accept=".csv" name="FileUpload" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <input type="submit" name="Submit" id="Submit" value="Upload" class="btn btn-primary btn-sm " style="width:100px"/>
+                        </div>
+                    </div>
+                </div>
+            }
+            <hr />
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Interview List
+                            <a id="export" href="@Url.Action("DownloadCSV", "Home")?filter=" class="btn btn-info btn-xs pull-right" style="width:100px" >Export </a>
+                            <a id="print" href="@Url.Action("PrintPreview", "Home")?filter=" class="btn btn-success btn-xs pull-right" style="margin-right: 5px;width:100px" target="_blank">Print</a>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="dataTable_wrapper">
+                                <table width="100%" class="table table-striped table-bordered table-hover" id="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Gender</th>
+                                            <th>Title</th>
+                                            <th>Occupation</th>
+                                            <th>Company</th>
+                                            <th>Given Name</th>
+                                            <th>Middle Initial</th>
+                                            <th>Surname</th>
+                                            <th>Blood Type</th>
+                                            <th>Email Address</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Gender</th>
+                                            <th>Title</th>
+                                            <th>Occupation</th>
+                                            <th>Company</th>
+                                            <th>Given Name</th>
+                                            <th>Middle Initial</th>
+                                            <th>Surname</th>
+                                            <th>Blood Type</th>
+                                            <th>Email Address</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Selected Row
+                            <button type="button" class="btn btn-primary btn-xs pull-right" id="btnSaveNewEntry" style="width:100px">Add New</button>
+                            <button type="button" class="btn btn-danger btn-xs pull-right" id="btnCancel" style="display: none; width:100px">Cancel</button>
+                            <button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 5px; display: none; width:100px" id="btnSave">Save</button>
+                            
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <form role="form">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <input class="form-control" id="inputGender" placeholder="Gender" autocomplete="off" readonly>
+                                        <span class="error">Gender field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Title</label>
+                                        <input class="form-control" id="inputTitle" placeholder="Title" autocomplete="off" readonly>
+                                        <span class="error">Title field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Occupation</label>
+                                        <input class="form-control" id="inputOccupation" placeholder="Occupation" autocomplete="off" readonly>
+                                        <span class="error">Occupation field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Company</label>
+                                        <input class="form-control" id="inputCompany" placeholder="Company" autocomplete="off" readonly>
+                                        <span class="error">Company field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Given Name</label>
+                                        <input class="form-control" id="inputGivenName" placeholder="Given" autocomplete="off" readonly >
+                                        <span class="error">Given Name field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Middle Initial</label>
+                                        <input class="form-control" id="inputMiddleInitial" placeholder="Middle" autocomplete="off" readonly>
+                                        <span class="error">Middle Initial field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Surname</label>
+                                        <input class="form-control" id="inputSurname" placeholder="Surname" autocomplete="off" readonly>
+                                        <span class="error">Surname field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Blood Type</label>
+                                        <input class="form-control" id="inputBloodType" placeholder="Blood Type" autocomplete="off" readonly>
+                                        <span class="error">Blood Type field is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email Address</label>
+                                        <input class="form-control"  id="inputEmailAddress" placeholder="Email Address" autocomplete="off" readonly>
+                                        <span class="error">Email field is required.</span>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+        </div>
+    </div>
+
+    @Html.Partial("JSPartial")
+    <script>
+
+
+
+        $(document).ready(function () {
+
+
+            var table = $("#table").DataTable({
+                "deferRender": true,
+                "colReorder": true,
+                "pagingType": "full_numbers",
+                //"processing": true,
+                "serverSide": true,
+                "select": {
+                    style: 'single'
+                },
+                "language": {
+                    "emptyTable": "No Data Available"
+                },
+                "lengthMenu": [[10, 100, 1000, -1], [10, 100, 1000, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+                "ajax": {
+                    "url": "@Url.Action("LoadDataTable", "Home")",
+                    "type": "POST",
+                    "data": function (d) {
+                        d.colOrder = colOrder;
+                    }
+                },
+
+                "columns": [
+                   { "data": "Gender", "name": "Gender" },
+                   { "data": "Title", "name": "Title" },
+                   { "data": "Occupation", "name": "Occupation" },
+                   { "data": "Company", "name": "Company" },
+                   { "data": "GivenName", "name": "GivenName" },
+                   { "data": "MiddleInitial", "name": "MiddleInitial" },
+                   { "data": "Surname", "name": "Surname" },
+                   { "data": "BloodType", "name": "BloodType" },
+                   { "data": "EmailAddress", "name": "EmailAddress" },
+                ],
+            });
+
+            $("#table").wrap('<div class="dataTables_scroll" />');
+
+            $('#table tfoot th').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+
+            table.on('select', function (e, dt, type, indexes) {
+                var rowData = table.rows(indexes).data().toArray();
+
+                $("#inputGender").val(rowData[0]["Gender"]);
+                $("#inputTitle").val(rowData[0]["Title"]);
+                $("#inputOccupation").val(rowData[0]["Occupation"]);
+                $("#inputCompany").val(rowData[0]["Company"]);
+                $("#inputGivenName").val(rowData[0]["GivenName"]);
+                $("#inputMiddleInitial").val(rowData[0]["MiddleInitial"]);
+                $("#inputSurname").val(rowData[0]["Surname"]);
+                $("#inputBloodType").val(rowData[0]["BloodType"]);
+                $("#inputEmailAddress").val(rowData[0]["EmailAddress"]);
+            })
+            .on('deselect', function (e, dt, type, indexes) {
+                $("#inputGender").val('');
+                $("#inputTitle").val('');
+                $("#inputOccupation").val('');
+                $("#inputCompany").val('');
+                $("#inputGivenName").val('');
+                $("#inputMiddleInitial").val('');
+                $("#inputSurname").val('');
+                $("#inputBloodType").val('');
+                $("#inputEmailAddress").val('');
+            });
+
+            table.on('xhr', function () {
+                updateHREF(table.ajax.params());
+            });
+
+            $("#table").DataTable().on('column-reorder', function (e, settings, details) {
+                colOrder = "";
+                colOrder += table.column('Gender:name').index();
+                colOrder += "," + table.column('Title:name').index();
+                colOrder += "," + table.column('Occupation:name').index();
+                colOrder += "," + table.column('Company:name').index();
+                colOrder += "," + table.column('GivenName:name').index();
+                colOrder += "," + table.column('MiddleInitial:name').index();
+                colOrder += "," + table.column('Surname:name').index();
+                colOrder += "," + table.column('BloodType:name').index();
+                colOrder += "," + table.column('EmailAddress:name').index();
+
+                updateHREF(table.ajax.params());
+            });
+
+            table.columns().every(function () {
+                var that = this;
+
+                $('input', this.footer()).on('keyup change', function () {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+
+        });
+
+        var auxFilterAlertMessage = "";
+        var auxFilterString = "";
+        var colOrder = "0,1,2,3,4,5,6,7,8";
+        var filter = "";
+
+        function FilterBeingUsed(filter) {
+            if (filter == '') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function NewEntryMode() {
+            $("#btnCancel").show(300);
+            $("#btnSaveNewEntry").hide(300);
+
+            $("#inputGender").val('');
+            $("#inputTitle").val('');
+            $("#inputOccupation").val('');
+            $("#inputCompany").val('');
+            $("#inputGivenName").val('');
+            $("#inputMiddleInitial").val('');
+            $("#inputSurname").val('');
+            $("#inputBloodType").val('');
+            $("#inputEmailAddress").val('');
+
+            $("#inputGender").prop("readonly", false);
+            $("#inputTitle").prop("readonly", false);
+            $("#inputOccupation").prop("readonly", false);
+            $("#inputCompany").prop("readonly", false);
+            $("#inputGivenName").prop("readonly", false);
+            $("#inputMiddleInitial").prop("readonly", false);
+            $("#inputSurname").prop("readonly", false);
+            $("#inputBloodType").prop("readonly", false);
+            $("#inputEmailAddress").prop("readonly", false);
+
+            $("#btnSave").show(300);
+            $("#inputGender").focus();
+        }
+
+        function NormalMode() {
+            $("#btnCancel").hide(300);
+            $("#btnSaveNewEntry").show(300);
+
+            $("#inputGender").val('');
+            $("#inputTitle").val('');
+            $("#inputOccupation").val('');
+            $("#inputCompany").val('');
+            $("#inputGivenName").val('');
+            $("#inputMiddleInitial").val('');
+            $("#inputSurname").val('');
+            $("#inputBloodType").val('');
+            $("#inputEmailAddress").val('');
+
+            $("#inputGender").prop("readonly", true);
+            $("#inputTitle").prop("readonly", true);
+            $("#inputOccupation").prop("readonly", true);
+            $("#inputCompany").prop("readonly", true);
+            $("#inputGivenName").prop("readonly", true);
+            $("#inputMiddleInitial").prop("readonly", true);
+            $("#inputSurname").prop("readonly", true);
+            $("#inputBloodType").prop("readonly", true);
+            $("#inputEmailAddress").prop("readonly", true);
+
+            $("#btnSave").hide(300);
+            $("#btnSave").text('Save');
+            $("#btnSave").removeClass("fa fa-check", 500);
+        }
+
+        function HideErrorSpan()
+        {
+            $('#inputGender').siblings('span.error').css('visibility', 'hidden');
+            $('#inputTitle').siblings('span.error').css('visibility', 'hidden');
+            $('#inputOccupation').siblings('span.error').css('visibility', 'hidden');
+            $('#inputCompany').siblings('span.error').css('visibility', 'hidden');
+            $('#inputGivenName').siblings('span.error').css('visibility', 'hidden');
+            $('#inputMiddleInitial').siblings('span.error').css('visibility', 'hidden');
+            $('#inputSurname').siblings('span.error').css('visibility', 'hidden');
+            $('#inputBloodType').siblings('span.error').css('visibility', 'hidden');
+            $('#inputEmailAddress').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        $("#btnSaveNewEntry").click(function () {
+            HideErrorSpan();
+            NewEntryMode();
+        });
+
+        $("#btnCancel").click(function () {
+            HideErrorSpan();
+            NormalMode();
+        });
+
+        $("#btnSave").click(function () {
+            var isAllValid = isValid();
+            try {
+
+            //Save if valid
+                if (isAllValid) {
+                    var data = {
+                        "Gender": $("#inputGender").val(),
+                        "Title": $("#inputTitle").val(),
+                        "Occupation": $("#inputOccupation").val(),
+                        "Company": $("#inputCompany").val(),
+                        "GivenName": $("#inputGivenName").val(),
+                        "MiddleInitial": $("#inputMiddleInitial").val(),
+                        "Surname": $("#inputSurname").val(),
+                        "BloodType": $("#inputBloodType").val(),
+                        "EmailAddress": $("#inputEmailAddress").val(),
+                    }
+
+                    $(this).val('Saving...');
+
+                    $.ajax({
+                        url: "@Url.Action("AddInterview", "Home")",
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "JSON",
+                        contentType: "application/json",
+                        success: function (d) {
+                            $(this).val('Save');
+
+                            if (d.success == true)
+                            {
+                                $('#table').DataTable().row.add({
+                                    "Gender": $("#inputGender").val(),
+                                    "Title": $("#inputTitle").val(),
+                                    "Occupation": $("#inputOccupation").val(),
+                                    "Company": $("#inputCompany").val(),
+                                    "GivenName": $("#inputGivenName").val(),
+                                    "MiddleInitial": $("#inputMiddleInitial").val(),
+                                    "Surname": $("#inputSurname").val(),
+                                    "BloodType": $("#inputBloodType").val(),
+                                    "EmailAddress": $("#inputEmailAddress").val(),
+                                }).draw();
+
+                                HideErrorSpan();
+
+                                $("#btnSave").text('');
+                                $("#btnSave").addClass("fa fa-check", 500);
+                                window.setTimeout(function () { NormalMode() }, 500);
+                            }
+                            alert(d.status);
+                        },
+                        error: function () {
+                            $(this).val('Save');
+                            alert('Error. Please try again.');
+                        }
+                    });
+                }
+
+            } catch (Ex) {
+                alert("Error: " + Ex);
+            }
+        });
+
+        function isValid() {
+
+            if ($('#inputGender').val().trim() == '') {
+                $('#inputGender').siblings('span.error').text('Gender field is required.');
+                $('#inputGender').siblings('span.error').css('visibility', 'visible');
+                $("#inputGender").focus();
+                return false;
+            }
+            else {
+                if ($('#inputGender').val().trim().length > 6) {
+                    $('#inputGender').siblings('span.error').text('Gender max length is 6.');
+                    $('#inputGender').siblings('span.error').css('visibility', 'visible');
+                    $("#inputGender").focus();
+                    return false;
+                }
+                else {
+                    $('#inputGender').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputTitle').val().trim() == '') {
+                $('#inputTitle').siblings('span.error').text('Title field is required.');
+                $('#inputTitle').siblings('span.error').css('visibility', 'visible');
+                $("#inputTitle").focus();
+                return false;
+            }
+            else {
+                if ($('#inputTitle').val().trim().length > 50) {
+                    $('#inputTitle').siblings('span.error').text('Title max length is 50.');
+                    $('#inputTitle').siblings('span.error').css('visibility', 'visible');
+                    $("#inputTitle").focus();
+                    return false;
+                }
+                else {
+                    $('#inputTitle').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputOccupation').val().trim() == '') {
+                $('#inputOccupation').siblings('span.error').text('Occupation field is required.');
+                $('#inputOccupation').siblings('span.error').css('visibility', 'visible');
+                $("#inputOccupation").focus();
+                return false;
+            }
+            else {
+                if ($('#inputOccupation').val().trim().length > 255) {
+                    $('#inputOccupation').siblings('span.error').text('Occupation max length is 255.');
+                    $('#inputOccupation').siblings('span.error').css('visibility', 'visible');
+                    $("#inputOccupation").focus();
+                    return false;
+                }
+                else {
+                    $('#inputOccupation').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputCompany').val().trim() == '') {
+                $('#inputCompany').siblings('span.error').text('Company field is required.');
+                $('#inputCompany').siblings('span.error').css('visibility', 'visible');
+                $("#inputCompany").focus();
+                return false;
+            }
+            else {
+                if ($('#inputCompany').val().trim().length > 255) {
+                    $('#inputCompany').siblings('span.error').text('Company max length is 255.');
+                    $('#inputCompany').siblings('span.error').css('visibility', 'visible');
+                    $("#inputCompany").focus();
+                    return false;
+                }
+                else {
+                    $('#inputCompany').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputGivenName').val().trim() == '') {
+                $('#inputGivenName').siblings('span.error').text('Given Name field is required.');
+                $('#inputGivenName').siblings('span.error').css('visibility', 'visible');
+                $("#inputGivenName").focus();
+                return false;
+            }
+            else {
+                if ($('#inputGivenName').val().trim().length > 50) {
+                    $('#inputGivenName').siblings('span.error').text('Given Name max length is 50.');
+                    $('#inputGivenName').siblings('span.error').css('visibility', 'visible');
+                    $("#inputGivenName").focus();
+                    return false;
+                }
+                else {
+                    $('#inputGivenName').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputMiddleInitial').val().trim() == '') {
+                $('#inputMiddleInitial').siblings('span.error').text('Middle Initial field is required.');
+                $('#inputMiddleInitial').siblings('span.error').css('visibility', 'visible');
+                $("#inputMiddleInitial").focus();
+                return false;
+            }
+            else {
+                if ($('#inputMiddleInitial').val().trim().length > 10) {
+                    $('#inputMiddleInitial').siblings('span.error').text('Middle Initial max length is 10.');
+                    $('#inputMiddleInitial').siblings('span.error').css('visibility', 'visible');
+                    $("#inputMiddleInitial").focus();
+                    return false;
+                }
+                else {
+                    $('#inputMiddleInitial').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputSurname').val().trim() == '') {
+                $('#inputSurname').siblings('span.error').text('Surname field is required.');
+                $('#inputSurname').siblings('span.error').css('visibility', 'visible');
+                $("#inputSurname").focus();
+                return false;
+            }
+            else {
+                if ($('#inputSurname').val().trim().length > 50) {
+                    $('#inputSurname').siblings('span.error').text('Surname max length is 50.');
+                    $('#inputSurname').siblings('span.error').css('visibility', 'visible');
+                    $("#inputSurname").focus();
+                    return false;
+                }
+                else {
+                    $('#inputSurname').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputBloodType').val().trim() == '') {
+                $('#inputBloodType').siblings('span.error').text('Blood Type field is required.');
+                $('#inputBloodType').siblings('span.error').css('visibility', 'visible');
+                $("#inputBloodType").focus();
+                return false;
+            }
+            else {
+                if ($('#inputBloodType').val().trim().length > 3) {
+                    $('#inputBloodType').siblings('span.error').text('Blood Type max length is 3.');
+                    $('#inputBloodType').siblings('span.error').css('visibility', 'visible');
+                    $("#inputBloodType").focus();
+                    return false;
+                }
+                else {
+                    $('#inputBloodType').siblings('span.error').css('visibility', 'hidden');
+                }
+            }
+
+            if ($('#inputEmailAddress').val().trim() == '') {
+                $('#inputEmailAddress').siblings('span.error').text('Email Address field is required.');
+                $('#inputEmailAddress').siblings('span.error').css('visibility', 'visible');
+                $("#inputEmailAddress").focus();
+                return false;
+            }
+            else {
+                if ($('#inputEmailAddress').val().trim().length > 50) {
+                    $('#inputEmailAddress').siblings('span.error').text('Email Address max length is 50.');
+                    $('#inputEmailAddress').siblings('span.error').css('visibility', 'visible');
+                    $("#inputEmailAddress").focus();
+                    return false;
+                }
+                else {
+                    if (isValidEmail($('#inputEmailAddress').val().trim()))
+                    {
+                        $('#inputEmailAddress').siblings('span.error').css('visibility', 'hidden');
+                    }
+                    else
+                    {
+                        $('#inputEmailAddress').siblings('span.error').text('Email Address is not valid');
+                        $('#inputEmailAddress').siblings('span.error').css('visibility', 'visible');
+                        $("#inputEmailAddress").focus();
+                        return false;
+                    }
+                    
+                }
+            }
+            return true;
+        }
+
+        function isValidEmail(emailAddress) {
+            var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+            return pattern.test(emailAddress);
+        }
+
+        function updateHREF(data)
+        {
+            var search = data.search.value;
+            var Gender = data.columns[0].search.value;
+            var Title = data.columns[1].search.value;
+            var Occupation = data.columns[2].search.value;
+            var Company = data.columns[3].search.value;
+            var GivenName = data.columns[4].search.value;
+            var MiddleInitial = data.columns[5].search.value;
+            var Surname = data.columns[6].search.value;
+            var BloodType = data.columns[7].search.value;
+            var EmailAddress = data.columns[8].search.value;
+            var sortinfo = $("#table").dataTable().fnSettings().aaSorting;
+
+            auxFilterString = "";
+            auxFilterAlertMessage = "";
+
+            if (FilterBeingUsed(search)) {
+                auxFilterString += " Global Search: <b>" + search + "</b>";
+                auxFilterAlertMessage = "[!] This data is being filtered by: <br>" + auxFilterString;
+            }
+            else {
+                if (FilterBeingUsed(Gender)) {
+                    auxFilterString += " | Gender: <b>" + Gender + "</b>";
+                }
+                if (FilterBeingUsed(Title)) {
+                    auxFilterString += " | Title: <b>" + Title + "</b>";
+                }
+                if (FilterBeingUsed(Occupation)) {
+                    auxFilterString += " | Occupation: <b>" + Occupation + "</b>";
+                }
+                if (FilterBeingUsed(Company)) {
+                    auxFilterString += " | Company: <b>" + Company + "</b>";
+                }
+                if (FilterBeingUsed(GivenName)) {
+                    auxFilterString += " | GivenName: <b>" + GivenName + "</b>";
+                }
+                if (FilterBeingUsed(MiddleInitial)) {
+                    auxFilterString += " | MiddleInitial: <b>" + MiddleInitial + "</b>";
+                }
+                if (FilterBeingUsed(Surname)) {
+                    auxFilterString += " | Surname: <b>" + Surname + "</b>";
+                }
+                if (FilterBeingUsed(BloodType)) {
+                    auxFilterString += " | BloodType: <b>" + BloodType + "</b>";
+                }
+                if (FilterBeingUsed(EmailAddress)) {
+                    auxFilterString += " | EmailAddress: <b>" + EmailAddress + "</b>";
+                }
+
+                if (auxFilterString != "") {
+                    auxFilterAlertMessage = "[!] This data is being filtered by: <br>" + auxFilterString;
+                }
+            }
+
+            filter = JSON.stringify(
+            {
+                "GlobalSearch": search,
+                "Gender": Gender,
+                "Title": Title,
+                "Occupation": Occupation,
+                "Company": Company,
+                "GivenName": GivenName,
+                "MiddleInitial": MiddleInitial,
+                "Surname": Surname,
+                "BloodType": BloodType,
+                "EmailAddress": EmailAddress,
+                "ColumnOrder": colOrder,
+                "SortInfo": sortinfo,
+            });
+
+            $("#export").attr("href", "@Url.Action("DownloadCSV", "Home")?filter=" + filter);
+            $("#print").attr("href", "@Url.Action("PrintPreview", "Home")?filter=" + filter);
+
+            //console.log("colOrder:" + colOrder);
+        }
+
+
+    </script>
+</body>
+</html>
